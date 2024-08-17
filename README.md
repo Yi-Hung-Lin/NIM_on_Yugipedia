@@ -48,5 +48,8 @@ def create_embeddings(embedding_path: str = "./embed"):
 
 如果在`urls`裡面加入更多鏈結，Retriever的知識庫涵蓋範圍就會變大，但相對的向量空間檔案也會變大，運行時間也會變長。
 
-然而這樣做會導致問題。我們使用的這個yugipedia網站自己有反爬蟲的手段，如果直接擷取資訊會遇到403 Forbidden。
+然而這樣做會導致問題。我們使用的這個yugipedia網站自己有反爬蟲的手段，如果直接擷取資訊會遇到403 Forbidden。而我們想擷取的資訊並不在網頁最表層。
+
+<img width="1440" alt="Screenshot 2024-08-17 at 7 17 43 PM" src="https://github.com/user-attachments/assets/ee5db1e0-f17c-453c-8dab-bc3713cf561f">
+
 
