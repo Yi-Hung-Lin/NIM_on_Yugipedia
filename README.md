@@ -48,8 +48,128 @@ def create_embeddings(embedding_path: str = "./embed"):
 
 如果在`urls`裡面加入更多鏈結，Retriever的知識庫涵蓋範圍就會變大，但相對的向量空間檔案也會變大，運行時間也會變長。
 
-然而這樣做會導致問題。我們使用的這個yugipedia網站自己有反爬蟲的手段，如果直接擷取資訊會遇到403 Forbidden。而我們想擷取的資訊並不在網頁最表層。
+然而這樣做會導致問題，因為我們想擷取的資訊並不在網頁最表層。加上這個yugipedia網站自己有反爬蟲的手段，如果直接靠程式擷取資訊有機率會遇到403 Forbidden。
 
 <img width="1440" alt="Screenshot 2024-08-17 at 7 17 43 PM" src="https://github.com/user-attachments/assets/ee5db1e0-f17c-453c-8dab-bc3713cf561f">
 
+所以這裡的做法是使用BeautifulSoup的其他功能，特別是自定義headers和depth來補足。
 
+```py
+
+# note: this cell is put before the above cell. 
+
+import re
+from typing import List, Union
+
+import requests
+from bs4 import BeautifulSoup
+
+from urllib.parse import urljoin
+
+# 解決 HTTP 403 Forbidden 错误. 请求 https://yugipedia.com/wiki/Set_Card_Lists:The_Infinite_Forbidden_(TCG-EN) 这个页面时，服务器拒绝了请求。这可能是由于服务器设置了某种限制，阻止了程序直接访问该页面。可能的原因包括防止网络爬虫、需要特定的用户代理或其他访问限制。
+# 绕过 403 Forbidden 错误：你可以尝试更改请求的头信息，模拟正常的浏览器请求，可能能够绕过服务器的限制。
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+}
+
+def html_document_loader(url: Union[str, bytes]) -> str:
+    """
+    Loads the HTML content of a document from a given URL and return its content.
+
+    Args:
+        url: The URL of the document.
+
+    Returns:
+        The content of the document.
+
+    Raises:
+        Exception: If there is an error while making the HTTP request.
+
+    """
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code == 403:
+            print(f"Access to {url} was forbidden (403). Skipping this page.")
+            return ""# Return empty string to skip this page
+        html_content = response.text
+    
+    except Exception as e:
+        print(f"Failed to load {url} due to exception {e}")
+        return ""
+
+    try:
+        # 创建Beautiful Soup对象用来解析html
+        soup = BeautifulSoup(html_content, "html.parser")
+
+        # 删除脚本和样式标签
+        for script in soup(["script", "style"]):
+            script.extract()
+
+        # 从 HTML 文档中获取纯文本
+        text = soup.get_text()
+
+        # 去除空格换行符
+        text = re.sub("\s+", " ", text).strip()
+
+        return text
+
+    except Exception as e:
+        print(f"Exception {e} while processing document from {url}")
+        return ""
+
+
+def get_all_links(url: str) -> List[str]:
+    """
+    Extracts all the links from a given URL's HTML content.
+    
+    Args:
+        url: The URL of the document.
+    
+    Returns:
+        A list of URLs found in the document.
+    """
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code == 403:
+            print(f"Access to {url} was forbidden (403). Skipping this page.")
+            return []  # Return empty list to skip links
+        soup = BeautifulSoup(response.text, "html.parser")
+        
+        # 获取页面中的所有链接
+        links = [urljoin(url, a.get('href')) for a in soup.find_all('a', href=True)]
+        
+        return links
+    except Exception as e:
+        print(f"Failed to retrieve links from {url} due to exception {e}")
+        return []
+
+def load_all_linked_documents(url: str, depth: int = 1) -> List[str]:
+    """
+    Loads the HTML content of a document from a given URL and all linked documents up to a certain depth.
+    
+    Args:
+        url: The URL of the document.
+        depth: The depth of links to follow.
+    
+    Returns:
+        A list of content from the document and all linked documents.
+    """
+    contents = []
+    
+    if depth < 1:
+        return contents
+    
+    # Load the content of the initial document
+    content = html_document_loader(url)
+    if content:
+        contents.append(content)
+    
+    # If we have depth to explore, get all linked documents
+    if depth > 1:
+        links = get_all_links(url)
+        for link in links:
+            contents.extend(load_all_linked_documents(link, depth - 1))
+    
+    return contents
+
+```
