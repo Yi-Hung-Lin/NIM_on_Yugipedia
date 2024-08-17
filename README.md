@@ -4,7 +4,7 @@ NVIDIA Inference Microservice(NIM)是一套專為加速AI模型推理而設計�
 
 NIM的核心特點包括：
 
-*	**優化推理性能**：NIM 針對每個模型和硬體環境進行優化，提供最佳的延遲和吞吐量，並且能大幅縮短部署時間，從幾週縮減至幾分鐘。
+* **優化推理性能**：NIM 針對每個模型和硬體環境進行優化，提供最佳的延遲和吞吐量，並且能大幅縮短部署時間，從幾週縮減至幾分鐘。
 * **企業級支持**：NIM 作為 NVIDIA AI Enterprise 的一部分，具備企業級的安全性和可管理性，並且支援與現有的企業管理工具整合。
 * **靈活部署**：NIM 支援在各大雲端平台和本地基礎設施上運行，適合不同規模的企業進行快速部署。
 
@@ -19,7 +19,6 @@ NIM通過簡化AI模型的部署過程，降低了技術複雜性，並提供了
 首先先從擷取資料開始。
 
 ```py
-
 def create_embeddings(embedding_path: str = "./embed"):
 
     embedding_path = "./embed"
@@ -45,7 +44,6 @@ def create_embeddings(embedding_path: str = "./embed"):
     texts = text_splitter.create_documents(documents)
     index_docs(url, text_splitter, texts, embedding_path)
     print("Generated embedding successfully")
-
 ```
 
 如果在`urls`裡面加入更多鏈結，Retriever的知識庫涵蓋範圍就會變大，但相對的向量空間檔案也會變大，運行時間也會變長。
@@ -54,10 +52,9 @@ def create_embeddings(embedding_path: str = "./embed"):
 
 <img width="1440" alt="Screenshot 2024-08-17 at 7 17 43 PM" src="https://github.com/user-attachments/assets/ee5db1e0-f17c-453c-8dab-bc3713cf561f">
 
-所以這裡的做法是調整這裡使用的BeautifulSoup語法，特別是自定義headers和depth來補足。
+所以正確的做法是調整這裡使用的BeautifulSoup語法，特別是自定義headers和depth來補足。
 
 ```py
-
 # note: This cell is supposed to be put before the above cell. The order here is only for commentary purposes.
 
 import re
@@ -173,19 +170,16 @@ def load_all_linked_documents(url: str, depth: int = 1) -> List[str]:
             contents.extend(load_all_linked_documents(link, depth - 1))
     
     return contents
-
 ```
 
-值得一提的是這個第一層網頁畫面上約有75%的超連結與我們想做的事情無關。可能可以做的優化是在抓取鏈結時先檢測`urls`裡面有無重複的字串。總之再加上一些其他的操作，我們就能成功地建構faiss檔案。
+值得一提的是這個第一層網頁畫面上約有75%的超連結與我們想做的事情無關。可能可以做的優化是在抓取鏈結時先檢測`urls`裡面有無重複的字串。總之再加上一些其他的操作，我們就能成功地建構.faiss檔案。
 
 測試：手動輸入
 
 ```py
-
 results = docsearch.similarity_search("Dragon of Pride and Soul")
 for res in results:
     print(res.page_content)
-
 ```
 > Dragon of Pride and Soul - Yugipedia Dragon of Pride and Soul From Yugipedia Jump to: navigation, search English sets Search categories Other languages Sets in other languages Dragon of Pride and Soul Japanese 誇りと魂の龍 Base 誇りと魂の龍 Base rōmaji Hokori to Tamashī no Ryū Kana プライドとたましいのドラゴン Furigana rōmaji Puraido to Tamashī no Doragon Card type MonsterAttribute DARK Types Dragon / EffectLevel 8 ATK / DEF 2500 / 2500Password 96823189Effect types Summoning condition Summoning condition ContinuousStatus Unlimited (OCG)Unlimited (TCG) Cannot be Normal Summoned/Set. Must be Special Summoned (from your hand) while your opponent has 25 or more cards in their GY. While you have 25 or more cards in your GY, this card gains 2500 ATK/DEF. Yugioh-Card database #20260 ja - rulings en fr de it pt es ae ko cn YGOResources database Gallery Rulings Errata Artworks Tips Trivia Appearances English sets Worldwide ReleaseNumberSetRarity2024-07-18INFO-EN000The Infinite ForbiddenQuarter Century Secret Rare Search Dragon of Pride and Soul - Yugipedia Dragon of Pride and Soul From Yugipedia (Redirected from INFO-EN000) Jump to: navigation, search English sets Search categories Other languages Sets in other languages Dragon of Pride and Soul Japanese 誇りと魂の龍 Base 誇りと魂の龍 Base rōmaji Hokori to Tamashī no Ryū Kana プライドとたましいのドラゴン Furigana rōmaji Puraido to Tamashī no Doragon Card type MonsterAttribute DARK Types Dragon / EffectLevel 8 ATK / DEF 2500 / 2500Password 96823189Effect types Summoning condition Summoning condition ContinuousStatus Unlimited (OCG)Unlimited (TCG) Cannot be Normal Summoned/Set. Must be Special Summoned (from your hand) while your opponent has 25 or more cards in their GY. While you have 25 or more cards in your GY, this card gains 2500 ATK/DEF. Yugioh-Card database #20260 ja - rulings en fr de it pt es ae ko cn YGOResources database Gallery Rulings Errata Artworks Tips Trivia Appearances English sets Worldwide ReleaseNumberSetRarity2024-07-18INFO-EN000The Infinite Soul""Ultimate Fusion""White Dragon Ritual""White Night Dragon""The White Stone of Legend" Retrieved from "https://yugipedia.com/index.php?title=Dragon_of_Pride_and_Soul&oldid=5260282" Categories: All cardsDuel Monsters cardsTCG cardsOCG cardsOCG/TCG cards without other appearancesHidden categories: Worldwide English cards that have not been reprintedPages needing a Korean Revised Romanization namePages needing a Simplified Chinese pinyin nameFrench cards that have not been reprintedGerman cards that have not been reprintedItalian cards that have not been reprintedPortuguese cards that have not been reprintedSpanish cards that have not been reprintedJapanese cards that have not been reprintedAsian-English cards that have not been reprintedKorean cards that have not been reprintedSimplified Chinese cards that have not been reprintedOCG cards without a listed Traditional Chinese release Navigation menu Personal tools Not logged inTalkContributionsCreate accountLog in Namespaces Dragon""Ultimate Dragon of Pride and Soul""Ultimate Fusion""White Dragon Ritual""White Night Dragon""The White Stone of Legend" Retrieved from "https://yugipedia.com/index.php?title=Dragon_of_Pride_and_Soul&oldid=5260282" Categories: All cardsDuel Monsters cardsTCG cardsOCG cardsOCG/TCG cards without other appearancesHidden categories: Worldwide English cards that have not been reprintedPages needing a Korean Revised Romanization namePages needing a Simplified Chinese pinyin nameFrench cards that have not been reprintedGerman cards that have not been reprintedItalian cards that have not been reprintedPortuguese cards that have not been reprintedSpanish cards that have not been reprintedJapanese cards that have not been reprintedAsian-English cards that have not been reprintedKorean cards that have not been reprintedSimplified Chinese cards that have not been reprintedOCG cards without a listed Traditional Chinese release Navigation menu Personal tools Not logged
 
@@ -193,4 +187,10 @@ for res in results:
 
 ## 項目成果與展示
 
+***
 
+## 問題與解決方案
+
+***
+
+## 項目總結與展望
