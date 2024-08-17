@@ -52,7 +52,7 @@ def create_embeddings(embedding_path: str = "./embed"):
 
 <img width="1440" alt="Screenshot 2024-08-17 at 7 17 43 PM" src="https://github.com/user-attachments/assets/ee5db1e0-f17c-453c-8dab-bc3713cf561f">
 
-所以這裡的做法是使用BeautifulSoup的其他功能，特別是自定義headers和depth來補足。
+所以這裡的做法是調整這裡使用的BeautifulSoup語法，特別是自定義headers和depth來補足。
 
 ```py
 
@@ -66,7 +66,9 @@ from bs4 import BeautifulSoup
 
 from urllib.parse import urljoin
 
-# 解決 HTTP 403 Forbidden 错误. 请求 https://yugipedia.com/wiki/Set_Card_Lists:The_Infinite_Forbidden_(TCG-EN) 这个页面时，服务器拒绝了请求。这可能是由于服务器设置了某种限制，阻止了程序直接访问该页面。可能的原因包括防止网络爬虫、需要特定的用户代理或其他访问限制。
+# 解決 HTTP 403 Forbidden 错误.
+# 请求 https://yugipedia.com/wiki/Set_Card_Lists:The_Infinite_Forbidden_(TCG-EN) 这个页面时，服务器拒绝了请求。
+# 这可能是由于服务器设置了某种限制，阻止了程序直接访问该页面。可能的原因包括防止网络爬虫、需要特定的用户代理或其他访问限制。
 # 绕过 403 Forbidden 错误：你可以尝试更改请求的头信息，模拟正常的浏览器请求，可能能够绕过服务器的限制。
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
@@ -74,18 +76,16 @@ headers = {
 
 def html_document_loader(url: Union[str, bytes]) -> str:
     """
-    Loads the HTML content of a document from a given URL and return its content.
-
+    Description:
+        Loads the HTML content of a document from a given URL and return its content.
     Args:
         url: The URL of the document.
-
     Returns:
         The content of the document.
-
     Raises:
         Exception: If there is an error while making the HTTP request.
-
     """
+
     try:
         response = requests.get(url, headers=headers)
         if response.status_code == 403:
@@ -120,14 +120,14 @@ def html_document_loader(url: Union[str, bytes]) -> str:
 
 def get_all_links(url: str) -> List[str]:
     """
-    Extracts all the links from a given URL's HTML content.
-    
+    Description:
+        Extracts all the links from a given URL's HTML content.
     Args:
         url: The URL of the document.
-    
     Returns:
         A list of URLs found in the document.
     """
+
     try:
         response = requests.get(url, headers=headers)
         if response.status_code == 403:
@@ -145,15 +145,15 @@ def get_all_links(url: str) -> List[str]:
 
 def load_all_linked_documents(url: str, depth: int = 1) -> List[str]:
     """
-    Loads the HTML content of a document from a given URL and all linked documents up to a certain depth.
-    
+    Description:
+        Loads the HTML content of a document from a given URL and all linked documents up to a certain depth.
     Args:
         url: The URL of the document.
         depth: The depth of links to follow.
-    
     Returns:
         A list of content from the document and all linked documents.
     """
+
     contents = []
     
     if depth < 1:
