@@ -172,7 +172,7 @@ def load_all_linked_documents(url: str, depth: int = 1) -> List[str]:
     return contents
 ```
 
-值得一提的是這個第一層網頁畫面上約有75%的超連結與我們想做的事情無關。可能可以做的優化是在抓取鏈結時先檢測`urls`裡面有無重複的字串。總之再加上一些其他的操作，我們就能成功地建構.faiss檔案。
+值得一提的是這個第一層網頁畫面上約有75%的超連結彼此重複，且與我們想做的事情無關。可能可以做的優化是在抓取鏈結時先檢測`urls`裡面有無重複的字串。至少現在總體鏈結量不至於無法負荷。加上一些其他的操作，我們就能成功地建構.faiss檔案。
 
 測試：手動輸入
 
@@ -183,9 +183,44 @@ for res in results:
 ```
 > Dragon of Pride and Soul - Yugipedia Dragon of Pride and Soul From Yugipedia Jump to: navigation, search English sets Search categories Other languages Sets in other languages Dragon of Pride and Soul Japanese 誇りと魂の龍 Base 誇りと魂の龍 Base rōmaji Hokori to Tamashī no Ryū Kana プライドとたましいのドラゴン Furigana rōmaji Puraido to Tamashī no Doragon Card type MonsterAttribute DARK Types Dragon / EffectLevel 8 ATK / DEF 2500 / 2500Password 96823189Effect types Summoning condition Summoning condition ContinuousStatus Unlimited (OCG)Unlimited (TCG) Cannot be Normal Summoned/Set. Must be Special Summoned (from your hand) while your opponent has 25 or more cards in their GY. While you have 25 or more cards in your GY, this card gains 2500 ATK/DEF. Yugioh-Card database #20260 ja - rulings en fr de it pt es ae ko cn YGOResources database Gallery Rulings Errata Artworks Tips Trivia Appearances English sets Worldwide ReleaseNumberSetRarity2024-07-18INFO-EN000The Infinite ForbiddenQuarter Century Secret Rare Search Dragon of Pride and Soul - Yugipedia Dragon of Pride and Soul From Yugipedia (Redirected from INFO-EN000) Jump to: navigation, search English sets Search categories Other languages Sets in other languages Dragon of Pride and Soul Japanese 誇りと魂の龍 Base 誇りと魂の龍 Base rōmaji Hokori to Tamashī no Ryū Kana プライドとたましいのドラゴン Furigana rōmaji Puraido to Tamashī no Doragon Card type MonsterAttribute DARK Types Dragon / EffectLevel 8 ATK / DEF 2500 / 2500Password 96823189Effect types Summoning condition Summoning condition ContinuousStatus Unlimited (OCG)Unlimited (TCG) Cannot be Normal Summoned/Set. Must be Special Summoned (from your hand) while your opponent has 25 or more cards in their GY. While you have 25 or more cards in your GY, this card gains 2500 ATK/DEF. Yugioh-Card database #20260 ja - rulings en fr de it pt es ae ko cn YGOResources database Gallery Rulings Errata Artworks Tips Trivia Appearances English sets Worldwide ReleaseNumberSetRarity2024-07-18INFO-EN000The Infinite Soul""Ultimate Fusion""White Dragon Ritual""White Night Dragon""The White Stone of Legend" Retrieved from "https://yugipedia.com/index.php?title=Dragon_of_Pride_and_Soul&oldid=5260282" Categories: All cardsDuel Monsters cardsTCG cardsOCG cardsOCG/TCG cards without other appearancesHidden categories: Worldwide English cards that have not been reprintedPages needing a Korean Revised Romanization namePages needing a Simplified Chinese pinyin nameFrench cards that have not been reprintedGerman cards that have not been reprintedItalian cards that have not been reprintedPortuguese cards that have not been reprintedSpanish cards that have not been reprintedJapanese cards that have not been reprintedAsian-English cards that have not been reprintedKorean cards that have not been reprintedSimplified Chinese cards that have not been reprintedOCG cards without a listed Traditional Chinese release Navigation menu Personal tools Not logged inTalkContributionsCreate accountLog in Namespaces Dragon""Ultimate Dragon of Pride and Soul""Ultimate Fusion""White Dragon Ritual""White Night Dragon""The White Stone of Legend" Retrieved from "https://yugipedia.com/index.php?title=Dragon_of_Pride_and_Soul&oldid=5260282" Categories: All cardsDuel Monsters cardsTCG cardsOCG cardsOCG/TCG cards without other appearancesHidden categories: Worldwide English cards that have not been reprintedPages needing a Korean Revised Romanization namePages needing a Simplified Chinese pinyin nameFrench cards that have not been reprintedGerman cards that have not been reprintedItalian cards that have not been reprintedPortuguese cards that have not been reprintedSpanish cards that have not been reprintedJapanese cards that have not been reprintedAsian-English cards that have not been reprintedKorean cards that have not been reprintedSimplified Chinese cards that have not been reprintedOCG cards without a listed Traditional Chinese release Navigation menu Personal tools Not logged
 
+確認資訊正確後，我們將Multi Agent的圖像辨識技術應用到這裡：
+
+```py
+from PIL import Image
+display(Image.open("Yu_Gi_Oh.png"))
+```
+<img width="352" alt="Yu_Gi_Oh" src="https://github.com/user-attachments/assets/97d099a6-29f0-4d47-b933-819b243e0f4d">
+
+```py
+chart_reading = ChatNVIDIA(model="ai-phi-3-vision-128k-instruct")
+result = chart_reading.invoke(f'there is a string of words on the upper section of the image, which represents the card name. find it, and print it out. : <img src="data:image/png;base64,{image_b64}" />')
+print(result.content)
+```
+> DRAGON OF PRIDE AND SOUL
+
 ***
 
 ## 項目成果與展示
+
+接下來，作為對照組，我們單純用沒有RAG的LLM進行測試。
+
+```py
+message = HumanMessage(content="Tell me the info about Dragon of Pride and Soul, including Card Type, Attribute/Type(if it has them), Level(if it has one), ATK/DEF(if it has them), Effect types, and descriptions")
+
+result = llm([message])  # 传递消息列表
+print(result.content)
+```
+> Unfortunately, I do not have specific information about a card called "Dragon of Pride and Soul." It is possible that it may be a custom or fan-made card, or it could be from a specific game or series that I do not have information on. If you provide more details or context, I may be able to assist you further.
+
+而以下是使用RAG的版本：
+
+```py
+query = "Tell me the info about Dragon of Pride and Soul, including Card Type, Attribute/Type(if it has them), Level(if it has one), ATK/DEF(if it has them), Effect types, and descriptions"
+result = qa({"question": query})
+rag_result = result.get("answer")
+rag_result
+```
+> 'Dragon of Pride and Soul is a DARK Dragon/Effect monster with 2500 ATK/DEF. It cannot be Normal Summoned/Set and must be Special Summoned from the hand while the opponent has 25 or more cards in their Graveyard. When the player has 25 or more cards in their Graveyard, this card gains 2500 ATK/DEF.'
 
 ***
 
