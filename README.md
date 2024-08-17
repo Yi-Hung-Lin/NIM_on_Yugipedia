@@ -172,7 +172,7 @@ def load_all_linked_documents(url: str, depth: int = 1) -> List[str]:
     return contents
 ```
 
-值得一提的是這個第一層網頁畫面上約有75%的超連結彼此重複，且與我們想做的事情無關。可能可以做的優化是在抓取鏈結時先檢測`urls`裡面有無重複的字串。至少現在總體鏈結量不至於無法負荷。加上一些其他的操作，我們就能成功地建構.faiss檔案。
+值得一提的是這個第一層網頁畫面上約有75%的超連結彼此重複，且與我們想做的事情無關。日後可能可以做的優化是在抓取鏈結時先檢測`urls`裡面有無重複的字串。至少現在總體鏈結量不至於無法負荷，加上一些其他的操作，我們就能成功地建構.faiss檔案。
 
 測試：手動輸入
 
@@ -202,7 +202,9 @@ print(result.content)
 
 ## 項目成果與展示
 
-接下來，作為對照組，我們單純用沒有RAG的LLM進行測試。
+### 純文字對答部分
+
+作為對照組，我們單純用沒有RAG的LLM進行測試。
 
 ```py
 message = HumanMessage(content="Tell me the info about Dragon of Pride and Soul, including Card Type, Attribute/Type(if it has them), Level(if it has one), ATK/DEF(if it has them), Effect types, and descriptions")
@@ -222,10 +224,34 @@ rag_result
 ```
 > 'Dragon of Pride and Soul is a DARK Dragon/Effect monster with 2500 ATK/DEF. It cannot be Normal Summoned/Set and must be Special Summoned from the hand while the opponent has 25 or more cards in their Graveyard. When the player has 25 or more cards in their Graveyard, this card gains 2500 ATK/DEF.'
 
+### 綜合運用Multi Agent
+
+<img width="1130" alt="gradio result" src="https://github.com/user-attachments/assets/ceb91b1a-5f6c-4266-a3fb-1d33384c50e6">
+
+資料正確無誤。
+
 ***
 
 ## 問題與解決方案
 
+最主要的問題是**繞過網站的爬蟲檢測和限制**，以及**網站中無用訊息過多**。
+
+兩者的解決方法都是大改範例中BeautifulSoup的參數即可。關於繞過限制，解決方式就是前面加上header，表明自己為正常的瀏覽器操作。
+
+此外，還曾經陷入過諸如.faiss檔案無法洗掉重寫之類的窘境。幸好以上問題都獲得了解決。
+
 ***
 
 ## 項目總結與展望
+
+這個項目利用Langchain工具，使用Nvidia AI-Embed-QA-4和Phi-3-Vision-128K-Instruct等模型，成功擷取了Yugipedia網站中的部分資訊，並做出了一個透過圖片，辨識卡名，搜尋卡片資料的問答機器人。
+
+日後可能的拓展方向為
+* 優化Embedding流程
+* 支援更多語言
+* Embed更多卡片，或是使用即時連線功能
+* 提供更詳細，非表面資訊的細節，像是配合的卡片等等
+
+***
+
+林益弘 YI-HUNG LIN
