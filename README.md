@@ -1,4 +1,4 @@
-# NIM_on_Yugipedia
+# NVIDIA AI-AGENT 項目訓練營
 
 NVIDIA Inference Microservice(NIM)是一套專為加速AI模型推理而設計的微服務工具。NIM提供了一個簡單且高效的方式來部署各種生成式AI模型，包括大型語言模型(LLM)、語音識別、影像處理等。它結合了NVIDIA的推理軟體(如 Triton Inference Server 和 TensorRT)，讓企業能夠在雲端或本地數據中心中快速部署和管理 AI 模型。
 
@@ -13,6 +13,8 @@ NIM通過簡化AI模型的部署過程，降低了技術複雜性，並提供了
 當然，這個微服務也不一定只能運用於企業情境中。本專案藉由Langchain語法的RAG技術，從[遊戲王百科](yugipedia.com)提取訊息並做正確的資訊回覆。
 
 ***
+
+## 實施步驟
 
 首先先從擷取資料開始。
 
@@ -56,7 +58,7 @@ def create_embeddings(embedding_path: str = "./embed"):
 
 ```py
 
-# note: this cell is put before the above cell. 
+# note: This cell is supposed to be put before the above cell. The order here is only for commentary purposes.
 
 import re
 from typing import List, Union
@@ -173,3 +175,22 @@ def load_all_linked_documents(url: str, depth: int = 1) -> List[str]:
     return contents
 
 ```
+
+值得一提的是這個第一層網頁畫面上約有75%的超連結與我們想做的事情無關。可能可以做的優化是在抓取鏈結時先檢測`urls`裡面有無重複的字串。總之再加上一些其他的操作，我們就能成功地建構faiss檔案。
+
+測試：手動輸入
+
+```py
+
+results = docsearch.similarity_search("Dragon of Pride and Soul")
+for res in results:
+    print(res.page_content)
+
+```
+> Dragon of Pride and Soul - Yugipedia Dragon of Pride and Soul From Yugipedia Jump to: navigation, search English sets Search categories Other languages Sets in other languages Dragon of Pride and Soul Japanese 誇りと魂の龍 Base 誇りと魂の龍 Base rōmaji Hokori to Tamashī no Ryū Kana プライドとたましいのドラゴン Furigana rōmaji Puraido to Tamashī no Doragon Card type MonsterAttribute DARK Types Dragon / EffectLevel 8 ATK / DEF 2500 / 2500Password 96823189Effect types Summoning condition Summoning condition ContinuousStatus Unlimited (OCG)Unlimited (TCG) Cannot be Normal Summoned/Set. Must be Special Summoned (from your hand) while your opponent has 25 or more cards in their GY. While you have 25 or more cards in your GY, this card gains 2500 ATK/DEF. Yugioh-Card database #20260 ja - rulings en fr de it pt es ae ko cn YGOResources database Gallery Rulings Errata Artworks Tips Trivia Appearances English sets Worldwide ReleaseNumberSetRarity2024-07-18INFO-EN000The Infinite ForbiddenQuarter Century Secret Rare Search Dragon of Pride and Soul - Yugipedia Dragon of Pride and Soul From Yugipedia (Redirected from INFO-EN000) Jump to: navigation, search English sets Search categories Other languages Sets in other languages Dragon of Pride and Soul Japanese 誇りと魂の龍 Base 誇りと魂の龍 Base rōmaji Hokori to Tamashī no Ryū Kana プライドとたましいのドラゴン Furigana rōmaji Puraido to Tamashī no Doragon Card type MonsterAttribute DARK Types Dragon / EffectLevel 8 ATK / DEF 2500 / 2500Password 96823189Effect types Summoning condition Summoning condition ContinuousStatus Unlimited (OCG)Unlimited (TCG) Cannot be Normal Summoned/Set. Must be Special Summoned (from your hand) while your opponent has 25 or more cards in their GY. While you have 25 or more cards in your GY, this card gains 2500 ATK/DEF. Yugioh-Card database #20260 ja - rulings en fr de it pt es ae ko cn YGOResources database Gallery Rulings Errata Artworks Tips Trivia Appearances English sets Worldwide ReleaseNumberSetRarity2024-07-18INFO-EN000The Infinite Soul""Ultimate Fusion""White Dragon Ritual""White Night Dragon""The White Stone of Legend" Retrieved from "https://yugipedia.com/index.php?title=Dragon_of_Pride_and_Soul&oldid=5260282" Categories: All cardsDuel Monsters cardsTCG cardsOCG cardsOCG/TCG cards without other appearancesHidden categories: Worldwide English cards that have not been reprintedPages needing a Korean Revised Romanization namePages needing a Simplified Chinese pinyin nameFrench cards that have not been reprintedGerman cards that have not been reprintedItalian cards that have not been reprintedPortuguese cards that have not been reprintedSpanish cards that have not been reprintedJapanese cards that have not been reprintedAsian-English cards that have not been reprintedKorean cards that have not been reprintedSimplified Chinese cards that have not been reprintedOCG cards without a listed Traditional Chinese release Navigation menu Personal tools Not logged inTalkContributionsCreate accountLog in Namespaces Dragon""Ultimate Dragon of Pride and Soul""Ultimate Fusion""White Dragon Ritual""White Night Dragon""The White Stone of Legend" Retrieved from "https://yugipedia.com/index.php?title=Dragon_of_Pride_and_Soul&oldid=5260282" Categories: All cardsDuel Monsters cardsTCG cardsOCG cardsOCG/TCG cards without other appearancesHidden categories: Worldwide English cards that have not been reprintedPages needing a Korean Revised Romanization namePages needing a Simplified Chinese pinyin nameFrench cards that have not been reprintedGerman cards that have not been reprintedItalian cards that have not been reprintedPortuguese cards that have not been reprintedSpanish cards that have not been reprintedJapanese cards that have not been reprintedAsian-English cards that have not been reprintedKorean cards that have not been reprintedSimplified Chinese cards that have not been reprintedOCG cards without a listed Traditional Chinese release Navigation menu Personal tools Not logged
+
+***
+
+## 項目成果與展示
+
+
