@@ -1,2 +1,20 @@
 # NIM_on_Yugipedia
-An Nvidia NIM application that pulls information from Yugipedia
+
+NVIDIA Inference Microservice(NIM)是一套專為加速AI模型推理而設計的微服務工具。NIM提供了一個簡單且高效的方式來部署各種生成式AI模型，包括大型語言模型(LLM)、語音識別、影像處理等。它結合了NVIDIA的推理軟體(如 Triton Inference Server 和 TensorRT)，讓企業能夠在雲端或本地數據中心中快速部署和管理 AI 模型。
+
+NIM的核心特點包括：
+
+*	**優化推理性能**：NIM 針對每個模型和硬體環境進行優化，提供最佳的延遲和吞吐量，並且能大幅縮短部署時間，從幾週縮減至幾分鐘。
+* **企業級支持**：NIM 作為 NVIDIA AI Enterprise 的一部分，具備企業級的安全性和可管理性，並且支援與現有的企業管理工具整合。
+* **靈活部署**：NIM 支援在各大雲端平台和本地基礎設施上運行，並且可輕鬆與 Kubernetes 集成，適合不同規模的企業進行快速部署。
+
+NIM通過簡化AI模型的部署過程，降低了技術複雜性，並提供了高效的推理性能，為企業應用中的AI模型提供了強大的支持。
+
+當然，這個微服務也不一定只能運用於企業情境中。本專案藉由Langchain語法的RAG技術，從[遊戲王百科](yugipedia.com)提取訊息並做正確的資訊回覆。
+
+***
+
+31415926535897932
+11223334555678999
+
+55 + 123 123 345 678 999
