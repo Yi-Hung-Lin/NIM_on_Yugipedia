@@ -1,5 +1,7 @@
 # NVIDIA AI-AGENT 項目訓練營：遊戲王卡片資訊查找
 
+<img width="1130" alt="gradio result" src="https://github.com/user-attachments/assets/ceb91b1a-5f6c-4266-a3fb-1d33384c50e6">
+
 NVIDIA Inference Microservice(NIM)是一套專為加速AI模型推理而設計的微服務工具。NIM提供了一個簡單且高效的方式來部署各種生成式AI模型，包括大型語言模型(LLM)、語音識別、影像處理等。它結合了NVIDIA的推理軟體(如 Triton Inference Server 和 TensorRT)，讓企業能夠在雲端或本地數據中心中快速部署和管理 AI 模型。
 
 NIM的核心特點包括：
